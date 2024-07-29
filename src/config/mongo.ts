@@ -9,7 +9,7 @@ async function dbConnect(): Promise<void> {
     }
 
     await mongoose.connect(DB_URI);
-    console.log('*** CREDIBOT DATABASE IS ALIVEEEEE ***');
+    console.log('*** BOT SCHEDULE OLD PEOPLE DATABASE IS ALIVEEEEE ***');
   } catch (error) {
     console.error('*** CONNECTION FAILED *** ', error)
   }
