@@ -15,7 +15,7 @@ function createApp() {
   app.use(express.json());
 
   app.get('/', (_req, res: Response) => {
-    res.send('credi bot is aliveeee')
+    res.send('bot schedule is aliveeee')
   });
 
   routerApi(app);
