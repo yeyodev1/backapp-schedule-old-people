@@ -1,10 +1,25 @@
 import express from 'express';
 
-import { createUser } from '../controllers/user.controller';
+import {
+	createUser,
+	setUserGuardian,
+	setUserPatient,
+	setUserLocation,
+  showLocationDates
+} from "../controllers/user.controller";
 import { userValidatorCreate } from '../validators/user.validator';
 
 const router = express.Router();
 
 router.post('/user', userValidatorCreate, createUser);
+
+// form routes
+router.post('/user-set-guardian', setUserGuardian);
+router.post('/user-set-patient', setUserPatient);
+router.post('/user-set-ask-location', setUserLocation);
+
+
+//show date to user
+router.get('/user-show-dates', showLocationDates)
 
 export default router;
