@@ -114,5 +114,22 @@ export async function showLocationDates(req: Request, res: Response): Promise<vo
     res.status(200).send(response);
   } catch (error) {
     handleHttpError(res, 'cannot show dates');
+  };
+};
+
+export async function setLocationDate(req: Request, res: Response): Promise <void> {
+  try {
+    const { from: number, body: message } : Ctx = req.body.ctx;
+
+    const user = await models.user.findOne({ cellphone: number });
+    
+    if(!user) {
+      return handleHttpError(res, 'cannot found user', 404);
+    };
+
+    await addRowsToSheet('dia escogido', message);
+    
+  } catch (error) {
+    handleHttpError(res, 'cannot set location date');
   }
 }
