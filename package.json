@@ -27,7 +27,8 @@
     "google-spreadsheet": "^4.1.2",
     "mime-types": "^2.1.35",
     "mongoose": "^8.4.3",
-    "multer": "1.4.5-lts.1"
+    "multer": "1.4.5-lts.1",
+    "openai": "^4.54.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

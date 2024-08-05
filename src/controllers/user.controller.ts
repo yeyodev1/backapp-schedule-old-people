@@ -3,10 +3,13 @@ import { Request, response, Response } from 'express';
 
 import models from '../models';
 import handleHttpError from '../utils/handleError';
-
+import { addRowsToSheet } from '../utils/handleSheetService';
 
 import type { Ctx } from '../interfaces/builderbot.interface';
-import { addRowsToSheet } from '../utils/handleSheetService';
+import AIClass from '../services/openai.class';
+import { extractDayFromMessage } from '../utils/extractDayFromMessage';
+
+const ai = new AIClass(process.env.OPEN_AI_KEY!)
 
 export async function createUser(req: Request, res: Response): Promise<void> {
   try {
@@ -92,15 +95,6 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
 
 export async function showLocationDates(req: Request, res: Response): Promise<void> {
   try {
-    // const { from: number, body: message } : Ctx = req.body.ctx;
-
-    // const user = await models.user.findOne({ cellphone: number });
-    
-    // if (!user) {
-    //   return handleHttpError(res, 'cannot found user', 404);
-    // }
-
-    // Formar el mensaje para WhatsApp
     const availableDays = `*Días disponibles:*\n- Lunes: 9:00 AM - 4:30 PM\n- Martes: 9:00 AM - 4:30 PM\n- Miércoles: 9:00 AM - 4:30 PM\n- Jueves: 9:00 AM - 4:30 PM\n- Viernes: 9:00 AM - 4:30 PM`;
 
     const response = {
@@ -127,9 +121,24 @@ export async function setLocationDate(req: Request, res: Response): Promise <voi
       return handleHttpError(res, 'cannot found user', 404);
     };
 
+    console.log('message:', message)
+    const text = await ai.createChat([
+      {
+        role: 'assistant',
+        content: `Tu objetivo sera corregir todas las faltas ortograficas de el siguiente mensaje\n "${message}, y solo devolveras el mensaje corregido, nada mas que el mensaje corregido"`
+      }
+    ]);
+    console.log('texto corregido: ', text);
+
+    const date = extractDayFromMessage(text as string);
+
+    console.log('date: ', date);
+
     await addRowsToSheet('dia escogido', message);
     
+    res.status(200).send('cositas');
   } catch (error) {
+    console.error('errosote: ', error)
     handleHttpError(res, 'cannot set location date');
   }
 }

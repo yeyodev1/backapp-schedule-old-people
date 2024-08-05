@@ -1,4 +1,4 @@
-import { getSheetByIndex } from '../services/gcp/spreadsheets';
+import { getSheetByIndex } from '../services/spreadsheets';
 
 type UserRowData = {
   ['nombre del acudiente']: string;
