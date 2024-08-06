@@ -8,6 +8,7 @@ import { addRowsToSheet } from '../utils/handleSheetService';
 import type { Ctx } from '../interfaces/builderbot.interface';
 import AIClass from '../services/openai.class';
 import { extractDayFromMessage } from '../utils/extractDayFromMessage';
+import prompts from '../utils/prompts';
 
 const ai = new AIClass(process.env.OPEN_AI_KEY!)
 
@@ -85,10 +86,35 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
       return handleHttpError(res, 'cannot found user', 404);
     };
 
-    await addRowsToSheet('sede escogida', message);
+    const locationParsed = await ai.createChat([
+      {
+        role: 'assistant',
+        content: prompts.parseUserLocation.replace('{userMessage}', message)
+      }
+    ]);
 
-    res.status(200).send('data setted');
+    let messageToUser = '';
+    
+    if (locationParsed != 'BOGOTÁ') {
+      console.log('location user selected: ', locationParsed)
+      messageToUser = `Perfecto, tu ubicación fue agendada\n\nNos vemos en ${locationParsed}`
+      await addRowsToSheet('sede escogida', locationParsed!);
+    } else {
+      messageToUser = 'Por favor específica tu ubicación'
+    }
+
+    const response = {
+      messages: [
+        {
+          type: 'to_user',
+          content: messageToUser
+        }
+      ],
+    }
+
+    res.status(200).send(response)
   } catch (error) {
+    console.error('error', error)
     handleHttpError(res, 'cannot set user location');
   };
 };
