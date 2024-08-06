@@ -96,10 +96,10 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
     let messageToUser = '';
     
     if (locationParsed != 'BOGOTÁ') {
-      messageToUser = `Perfecto, tu ubicación fue agendada\n\nNos vemos en ${locationParsed}`
+      messageToUser = `¡Perfecto! Tu ubicación fue tomada 📍.\n\nUbicación seleccionada: ${locationParsed}`
       await addRowsToSheet('sede escogida', locationParsed!);
     } else {
-      messageToUser = 'Por favor específica tu ubicación'
+      messageToUser = 'Por favor, especifica tu ubicación 📍.'
     }
 
     const response = {
