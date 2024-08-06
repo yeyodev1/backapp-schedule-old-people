@@ -165,7 +165,7 @@ export async function setLocationDate(req: Request, res: Response): Promise <voi
 
     // console.log('date: ', date);
 
-    // await addRowsToSheet('dia escogido', dateParsed as string);
+    await addRowsToSheet('dia escogido', dateParsed as string);
     
     const response = {
       messages: [
