@@ -96,7 +96,6 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
     let messageToUser = '';
     
     if (locationParsed != 'BOGOTÁ') {
-      console.log('location user selected: ', locationParsed)
       messageToUser = `Perfecto, tu ubicación fue agendada\n\nNos vemos en ${locationParsed}`
       await addRowsToSheet('sede escogida', locationParsed!);
     } else {
@@ -147,22 +146,38 @@ export async function setLocationDate(req: Request, res: Response): Promise <voi
       return handleHttpError(res, 'cannot found user', 404);
     };
 
-    console.log('message:', message)
-    const text = await ai.createChat([
+    let userMessage = ''
+
+    const dateParsed = await ai.createChat([
       {
         role: 'assistant',
-        content: `Tu objetivo sera corregir todas las faltas ortograficas de el siguiente mensaje\n "${message}, y solo devolveras el mensaje corregido, nada mas que el mensaje corregido"`
+        content: prompts.parseUserDateSelected.replace('{userMessage}', message).replace('{date}', String(new Date()))
       }
     ]);
-    console.log('texto corregido: ', text);
 
-    const date = extractDayFromMessage(text as string);
+    if(dateParsed === 'not_possible') {
+      userMessage = 'Escoge otra fecha por favor 🙁'
+    } else {
+      userMessage = `El dia agendado fue ${dateParsed}`
+    }
 
-    console.log('date: ', date);
+    // const date = extractDayFromMessage(dateParsed as string);
 
-    await addRowsToSheet('dia escogido', message);
+    // console.log('date: ', date);
+
+    // await addRowsToSheet('dia escogido', dateParsed as string);
     
-    res.status(200).send('cositas');
+    const response = {
+      messages: [
+        {
+          type: 'to_user',
+          content: userMessage
+        }
+      ],
+      userMessage
+    }
+
+    res.status(200).send(response);
   } catch (error) {
     console.error('errosote: ', error)
     handleHttpError(res, 'cannot set location date');
