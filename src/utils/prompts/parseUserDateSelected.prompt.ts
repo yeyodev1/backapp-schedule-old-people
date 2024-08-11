@@ -1,17 +1,8 @@
 export const parseUserDateSelected = `You will receive a user's schedule message. The previous message was:
 
-"Todos los horarios son de 9:00 AM a 4:30 PM 🕘.
-
-Días disponibles:
-
-📅 Lunes: 9:00 AM - 4:30 PM
-📅 Martes: 9:00 AM - 4:30 PM
-📅 Miércoles: 9:00 AM - 4:30 PM
-📅 Jueves: 9:00 AM - 4:30 PM
-📅 Viernes: 9:00 AM - 4:30 PM
-
-Por favor, escoge un horario ⏰."
-
+-----------------------------------------
+{sedesDate}
+-----------------------------------------
 You have to guide from the current date, which is [{date}].
 
 If the user specifies a day of the week (e.g., "Lunes"), your output should be the next occurrence of that day in the current year. Format the output explicitly as "day/month/year" in Spanish. For example, if today is Tuesday, August 6, and the user says "Lunes", your output should be "lunes/12/08/2024".
