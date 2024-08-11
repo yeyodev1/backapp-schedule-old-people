@@ -177,11 +177,18 @@ export async function setLocationDate(req: Request, res: Response): Promise <voi
 
     let userMessage = ''
 
+    const userSedes = await sheetService.getSheetData(1);
+
+    const userSedesParsed = formatMessageOfSede(userSedes);
+
     const dateParsed = await ai.createChat([
       {
         role: 'assistant',
-        content: prompts.parseUserDateSelected.replace('{userMessage}', message).replace('{date}', String(new Date()))
-      }
+        content: prompts.parseUserDateSelected
+          .replace('{userMessage}', message)
+          .replace('{date}', String(new Date()))
+          .replace('{sedesDate}', userSedesParsed)
+      },
     ]);
 
     if(dateParsed === 'not_possible') {
