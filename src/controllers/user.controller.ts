@@ -113,16 +113,14 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
     };
 
     const userSedes = await sheetService.getSheetData(1);
-    console.log('user sedes', userSedes);
 
+    const userSedesParsed = formatMessageOfSede(userSedes);
     const locationParsed = await ai.createChat([
       {
         role: 'assistant',
-        content: prompts.parseUserLocation.replace('{userMessage}', message).replace('{userSedes}', String(userSedes))
+        content: prompts.parseUserLocation.replace('{userMessage}', message).replace('{userSedes}', userSedesParsed)
       }
     ]);
-
-    console.log('location parsed: ', locationParsed);
 
     let messageToUser = '';
     
