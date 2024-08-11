@@ -23,7 +23,7 @@ router.post('/user-set-ask-location', setUserLocation);
 
 
 //show date to user
-router.get('/user-show-dates', showLocationDates);
+router.post('/user-show-dates', showLocationDates);
 router.post('/user-get-date', setLocationDate);
 
 export default router;
