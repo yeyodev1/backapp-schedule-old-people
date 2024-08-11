@@ -1,16 +1,19 @@
 import crypto from 'node:crypto';
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
 
 import models from '../models';
+import prompts from '../utils/prompts';
+import AIClass from '../services/openai.class';
 import handleHttpError from '../utils/handleError';
+import GoogleSheetService from '../services/spreadsheets';
 import { addRowsToSheet } from '../utils/handleSheetService';
+import { formatMessageOfSede } from '../utils/formattedMessages';
 
 import type { Ctx } from '../interfaces/builderbot.interface';
-import AIClass from '../services/openai.class';
-import { extractDayFromMessage } from '../utils/extractDayFromMessage';
-import prompts from '../utils/prompts';
 
 const ai = new AIClass(process.env.OPEN_AI_KEY!)
+const sheetService = new GoogleSheetService();
+
 
 export async function createUser(req: Request, res: Response): Promise<void> {
   try {
@@ -76,6 +79,29 @@ export async function setUserPatient(req: Request, res: Response): Promise<void>
   };
 };
 
+export async function showLocationtoUser(req: Request, res: Response): Promise<void> {
+  try {
+
+    const userSedes = await sheetService.getSheetData(1);
+
+
+    const messageToUser = formatMessageOfSede(userSedes);
+
+    const response = {
+      messages: [
+        {
+          type: 'to_user',
+          content: messageToUser
+        }
+      ],
+    }
+
+    res.status(200).send(response)
+  } catch {
+    handleHttpError(res, 'cannot show location to user')
+  }
+}
+
 export async function setUserLocation(req: Request, res: Response): Promise<void> {
   try {
     const { from: number, body: message } : Ctx = req.body.ctx;
@@ -86,12 +112,17 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
       return handleHttpError(res, 'cannot found user', 404);
     };
 
+    const userSedes = await sheetService.getSheetData(1);
+    console.log('user sedes', userSedes);
+
     const locationParsed = await ai.createChat([
       {
         role: 'assistant',
-        content: prompts.parseUserLocation.replace('{userMessage}', message)
+        content: prompts.parseUserLocation.replace('{userMessage}', message).replace('{userSedes}', String(userSedes))
       }
     ]);
+
+    console.log('location parsed: ', locationParsed);
 
     let messageToUser = '';
     
