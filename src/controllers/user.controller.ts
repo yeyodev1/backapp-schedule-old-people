@@ -6,8 +6,8 @@ import prompts from '../utils/prompts';
 import AIClass from '../services/openai.class';
 import handleHttpError from '../utils/handleError';
 import GoogleSheetService from '../services/spreadsheets';
-import { addRowsToSheet } from '../utils/handleSheetService';
-import { formatMessageOfSede } from '../utils/formattedMessages';
+import { addRowsToSheet, getDaysAvailablesByCity, getLastSedeEscogidaByPhoneNumber } from '../utils/handleSheetService';
+import { formatMessageOfSede, formatScheduleMessage } from '../utils/formattedMessages';
 
 import type { Ctx } from '../interfaces/builderbot.interface';
 
@@ -149,13 +149,19 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
 
 export async function showLocationDates(req: Request, res: Response): Promise<void> {
   try {
-    const availableDays = `*Días disponibles:*\n- Lunes: 9:00 AM - 4:30 PM\n- Martes: 9:00 AM - 4:30 PM\n- Miércoles: 9:00 AM - 4:30 PM\n- Jueves: 9:00 AM - 4:30 PM\n- Viernes: 9:00 AM - 4:30 PM`;
+    const { from: number, body: message }: Ctx = req.body.ctx;
+
+    const lastSedeSelected = await getLastSedeEscogidaByPhoneNumber(number);
+
+    const dayAvailableByCity = await getDaysAvailablesByCity(lastSedeSelected);
+
+    const userMessage = formatScheduleMessage(dayAvailableByCity as any);
 
     const response = {
       messages: [
         {
           type: 'to_user',
-          content: availableDays
+          content: userMessage
         }
       ],
     }

@@ -13,3 +13,25 @@ export function formatMessageOfSede (data: CiudadInfo[]): string {
 
   return message.trim(); 
 };
+
+
+export function formatScheduleMessage(data: { daysAvailables: { day: string, schedule: string }[] }): string {
+  let message = 'Todos los horarios son de 9:00 AM a 4:30 PM 🕘.\n\nDías disponibles:\n\n';
+
+  const dayMap: { [key: string]: string } = {
+    lunes: "Lunes",
+    martes: "Martes",
+    miercoles: "Miércoles",
+    jueves: "Jueves",
+    viernes: "Viernes",
+    sabado: "Sábado",
+    domingo: "Domingo"
+  };
+
+  data.daysAvailables.forEach(dayObj => {
+    const dayFormatted = dayMap[dayObj.day.toLowerCase()] || dayObj.day;
+    message += `📅 ${dayFormatted.charAt(0).toUpperCase() + dayFormatted.slice(1)}: ${dayObj.schedule}\n`;
+  });
+
+  return message.trim();
+}
