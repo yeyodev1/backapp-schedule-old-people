@@ -16,7 +16,7 @@ export function formatMessageOfSede (data: CiudadInfo[]): string {
 
 
 export function formatScheduleMessage(data: { daysAvailables: { day: string, schedule: string }[] }): string {
-  let message = 'Todos los horarios son de 9:00 AM a 4:30 PM 🕘.\n\nDías disponibles:\n\n';
+  let message = 'El día de prueba es de 9:30am a 4:30pm🕘.\n\nDías disponibles:\n\n';
 
   const dayMap: { [key: string]: string } = {
     lunes: "Lunes",
@@ -30,8 +30,10 @@ export function formatScheduleMessage(data: { daysAvailables: { day: string, sch
 
   data.daysAvailables.forEach(dayObj => {
     const dayFormatted = dayMap[dayObj.day.toLowerCase()] || dayObj.day;
-    message += `📅 ${dayFormatted.charAt(0).toUpperCase() + dayFormatted.slice(1)}: ${dayObj.schedule}\n`;
+    message += `📅 ${dayFormatted.charAt(0).toUpperCase() + dayFormatted.slice(1)}\n`;
   });
+
+  console.log('mensaje : ', message)
 
   return message.trim();
 }
