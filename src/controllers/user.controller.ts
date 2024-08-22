@@ -6,7 +6,7 @@ import prompts from '../utils/prompts';
 import AIClass from '../services/openai.class';
 import handleHttpError from '../utils/handleError';
 import GoogleSheetService from '../services/spreadsheets';
-import { addRowsToSheet, getDaysAvailablesByCity, getLastSedeEscogidaByPhoneNumber } from '../utils/handleSheetService';
+import { addRowsToSheet, getDaysAvailablesByCity, getFullAddressBySede, getLastSedeEscogidaByPhoneNumber } from '../utils/handleSheetService';
 import { formatMessageOfSede, formatScheduleMessage } from '../utils/formattedMessages';
 
 import type { Ctx } from '../interfaces/builderbot.interface';
@@ -233,3 +233,21 @@ export async function setLocationDate(req: Request, res: Response): Promise <voi
     handleHttpError(res, 'cannot set location date');
   }
 }
+
+export async function sendGoodbyeMessage(req: Request, res: Response): Promise <void> {
+  try {
+    const { from: number } : Ctx = req.body.ctx;
+
+    const lastSedeEscogida = await getLastSedeEscogidaByPhoneNumber(number);
+
+    console.log('lastSedeEscogida: ', lastSedeEscogida)
+
+    const fullAdress = await getFullAddressBySede(lastSedeEscogida);
+    console.log('full address: ', fullAdress)
+    
+    res.status(200).send(fullAdress)
+  } catch (error) {
+    console.error('errorsote: ', error);
+    handleHttpError(res, 'cannot send googbye message user');
+  };
+};
