@@ -7,7 +7,8 @@ import {
 	setUserLocation,
   showLocationDates,
 	setLocationDate,
-	showLocationtoUser
+	showLocationtoUser,
+	sendGoodbyeMessage,
 } from "../controllers/user.controller";
 import { userValidatorCreate } from '../validators/user.validator';
 
@@ -20,6 +21,7 @@ router.post('/user-set-guardian', setUserGuardian);
 router.post('/user-set-patient', setUserPatient);
 router.get('/user-show-location', showLocationtoUser);
 router.post('/user-set-ask-location', setUserLocation);
+router.post('/user-goodbye-message', sendGoodbyeMessage);
 
 
 //show date to user
