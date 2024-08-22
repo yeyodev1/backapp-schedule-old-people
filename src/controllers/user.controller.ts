@@ -125,9 +125,14 @@ export async function setUserLocation(req: Request, res: Response): Promise<void
     let messageToUser = '';
     let redirect = '';
     
-    if (locationParsed != 'BOGOTÁ') {
+
+    if (locationParsed === 'n/a') {
+      messageToUser = 'Por favor, especifica tu ubicación. 📍';
+      redirect = 'askAgain';
+    } else if (locationParsed != 'BOGOTÁ') {
       messageToUser = `¡Perfecto! Tu ubicación fue tomada 📍.\n\nUbicación seleccionada: ${locationParsed}`
-      await addRowsToSheet('sede escogida', locationParsed!);
+      console.log('message to user: ', messageToUser)
+      // await addRowsToSheet('sede escogida', locationParsed!);
     } else {
       messageToUser = 'Por favor, especifica la sede a la que deseas agendar. 📍.'
       redirect = 'askAgain'
