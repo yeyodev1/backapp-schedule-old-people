@@ -76,3 +76,37 @@ export async function getDaysAvailablesByCity(sedeEscogida: string, sheetIndex =
     throw new Error(`Error al buscar días disponibles: ${error}`);
   }
 }
+
+export async function getFullAddressBySede(
+  sedeSelected: string, 
+  sheetIndex = 1): Promise<{ originalPart: string; city: string }> {
+  try {
+    const rows = await sheetService.getAllRows(sheetIndex);
+
+    const [, selectedSede] = sedeSelected.split('|').map(part => part.trim().toLowerCase());
+
+    for (const row of rows) {
+      const city = row.get('Ciudad') || '';
+      const sede = row.get('Sede') || '';
+
+      if (sedeSelected.includes(city.trim())) {
+        const sedeParts = sede.split('|').map((part: string) => part.trim().toLowerCase());
+
+        const matchingPart = sedeParts.find((part: string) => part.includes(selectedSede));
+        if (matchingPart) {
+          const originalPart = sede.split('|').find((part: string) => part.trim().toLowerCase().includes(selectedSede));
+          return {
+            originalPart,
+            city
+          }
+        };
+      };
+    };
+    return {
+      originalPart: 'Not found',
+      city: 'Not found'
+    };
+  } catch (error) {
+    throw new Error(`Error searching data: ${error}`);
+  }
+}
