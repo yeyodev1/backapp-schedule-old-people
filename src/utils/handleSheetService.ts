@@ -79,7 +79,7 @@ export async function getDaysAvailablesByCity(sedeEscogida: string, sheetIndex =
 
 export async function getFullAddressBySede(
   sedeSelected: string, 
-  sheetIndex = 1): Promise<{ originalPart: string; city: string }> {
+  sheetIndex = 1): Promise<{ sedeSelected: string; city: string }> {
   try {
     const rows = await sheetService.getAllRows(sheetIndex);
 
@@ -94,16 +94,16 @@ export async function getFullAddressBySede(
 
         const matchingPart = sedeParts.find((part: string) => part.includes(selectedSede));
         if (matchingPart) {
-          const originalPart = sede.split('|').find((part: string) => part.trim().toLowerCase().includes(selectedSede));
+          const sedeSelected = sede.split('|').find((part: string) => part.trim().toLowerCase().includes(selectedSede));
           return {
-            originalPart,
+            sedeSelected,
             city
           }
         };
       };
     };
     return {
-      originalPart: 'Not found',
+      sedeSelected: 'Not found',
       city: 'Not found'
     };
   } catch (error) {
