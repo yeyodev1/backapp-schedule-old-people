@@ -3,7 +3,8 @@ export const parseUserLocation = `You are responsible for analyzing the user's r
 -----------------------------------
 {userSedes}
 -----------------------------------
-Your output should always be in the format: CITY|SEDE NAME. 
+Your output should always be in the format: CITY|SEDE NAME.
+In case the outpt is not clear you have to answer: n/a 
 
 - If the city is Bogotá, and no specific "sede" is mentioned, your output should be just "Bogotá".
 - If only the city is provided, interpret it directly and give the city name only.
@@ -18,6 +19,8 @@ Examples:
    - Output: "BOGOTÁ|Sede barrio Pontevedra"
 4. User says: "Bogotá"
    - Output: "BOGOTÁ"
+5. User says: something that is not clear for example: sede
+   -Output: "n/a"
 
 Begin the analysis now.
 
