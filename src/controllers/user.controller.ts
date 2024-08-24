@@ -213,10 +213,10 @@ export async function setLocationDate(req: Request, res: Response): Promise <voi
     ]);
 
     if(dateParsed === 'not_possible') {
-      userMessage = 'Escoge otra fecha por favor 🙁'
+      userMessage = 'Escoge otra fecha por favor 🙁';
     } else {
-      userMessage = `El dia agendado fue ${dateParsed}`
-    }
+      userMessage = `A continuación tu resumen`;
+    };
 
     // const date = extractDayFromMessage(dateParsed as string);
 
@@ -246,8 +246,6 @@ export async function sendGoodbyeMessage(req: Request, res: Response): Promise <
     const { from: number } : Ctx = req.body.ctx;
 
     const lastSedeEscogida = await getLastSedeEscogidaByPhoneNumber(number);
-
-    console.log('lastSedeEscogida: ', lastSedeEscogida)
 
     const { city, sedeSelected } = await getFullAddressBySede(lastSedeEscogida);
     const date = await getLastDateChosenByPhoneNumber(number);
