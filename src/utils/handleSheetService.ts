@@ -1,3 +1,4 @@
+import { convertDate } from './convertDate';
 import GoogleSheetService from '../services/spreadsheets';
 
 const sheetService = new GoogleSheetService();
@@ -108,5 +109,31 @@ export async function getFullAddressBySede(
     };
   } catch (error) {
     throw new Error(`Error searching data: ${error}`);
+  }
+}
+
+export async function getLastDateChosenByPhoneNumber(phoneNumber: string, sheetIndex = 0): Promise<string> {
+  try {
+    const rows = await sheetService.getAllRows(sheetIndex);
+
+    const filteredRows = rows.filter(row => row.get('nro de telefono') === phoneNumber);
+
+    if (filteredRows.length === 0) {
+      throw new Error(`No entries found for phone number ${phoneNumber}`);
+    }
+
+    // Conversión de fecha al formato YYYY-MM-DD para comparación
+    const sortedRows = filteredRows.sort((a, b) => {
+      const dateA = convertDate(a.get('dia escogido'));
+      const dateB = convertDate(b.get('dia escogido'));
+      return dateB.getTime() - dateA.getTime(); // Orden descendente
+    });
+
+    // Tomar la primera fila después de ordenar
+    const lastRow = sortedRows[0];
+
+    return lastRow.get('dia escogido');
+  } catch (error) {
+    throw new Error(`Error al buscar la fecha escogida: ${error}`);
   }
 }

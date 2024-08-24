@@ -2,11 +2,18 @@ import crypto from 'node:crypto';
 import { Request, Response } from 'express';
 
 import models from '../models';
+import { 
+  addRowsToSheet,
+  getFullAddressBySede,
+  getDaysAvailablesByCity,
+  getLastSedeEscogidaByPhoneNumber,
+  getLastDateChosenByPhoneNumber
+} from '../utils/handleSheetService';
 import prompts from '../utils/prompts';
 import AIClass from '../services/openai.class';
 import handleHttpError from '../utils/handleError';
 import GoogleSheetService from '../services/spreadsheets';
-import { addRowsToSheet, getDaysAvailablesByCity, getFullAddressBySede, getLastSedeEscogidaByPhoneNumber } from '../utils/handleSheetService';
+import { generateConfirmationMessage } from '../utils/goodbyeMessage';
 import { formatMessageOfSede, formatScheduleMessage } from '../utils/formattedMessages';
 
 import type { Ctx } from '../interfaces/builderbot.interface';
@@ -242,10 +249,21 @@ export async function sendGoodbyeMessage(req: Request, res: Response): Promise <
 
     console.log('lastSedeEscogida: ', lastSedeEscogida)
 
-    const fullAdress = await getFullAddressBySede(lastSedeEscogida);
-    console.log('full address: ', fullAdress)
+    const { city, sedeSelected } = await getFullAddressBySede(lastSedeEscogida);
+    const date = await getLastDateChosenByPhoneNumber(number);
+
+    const userToMessage = generateConfirmationMessage(city, sedeSelected, date);
+
+    const response = {
+      messages: [
+        {
+          type: 'to_user', 
+          content: userToMessage
+        }
+      ]
+    }
     
-    res.status(200).send(fullAdress)
+    res.status(200).send(response)
   } catch (error) {
     console.error('errorsote: ', error);
     handleHttpError(res, 'cannot send googbye message user');
